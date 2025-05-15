@@ -1,4 +1,4 @@
-namespace Presentation.Models
+namespace UploadingEnd.Models
 {
     public class ErrorViewModel
     {

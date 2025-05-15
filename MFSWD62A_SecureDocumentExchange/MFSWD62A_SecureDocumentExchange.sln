@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{FF3FE6B6-65BF-4DB8-A2AA-DE68F01540E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "Presentation\Presentation.csproj", "{BAFA751F-77BA-4350-BC0A-04D386873246}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UploadingEnd", "Presentation\UploadingEnd.csproj", "{BAFA751F-77BA-4350-BC0A-04D386873246}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
