@@ -1,4 +1,5 @@
 using DataAccess.Context;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,9 +17,16 @@ namespace UploadingEnd
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<UploadingUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<DocumentExchangeDbContext>();
-            builder.Services.AddControllersWithViews();
+
+            //Enable external login with a Microsoft account.
+            builder.Services.AddAuthentication()
+                .AddMicrosoftAccount(options =>
+                {
+                    options.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
+                    options.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
+                });
 
             var app = builder.Build();
 
