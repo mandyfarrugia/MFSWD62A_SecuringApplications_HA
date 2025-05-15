@@ -38,6 +38,9 @@ namespace UploadingEnd
             {
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); //Duration of lockout period once user exceeds the maximum allowed failed attempts.
                 options.Lockout.MaxFailedAccessAttempts = 5; //How many failed attempts are allowed before lockout.         
+                options.Password.RequireNonAlphanumeric = true; //Whether password should comprise of characters that are neither numbers (0-9) nor letters (a-z/A-Z), instead including symbols, punctuation marks, and special characters.
+                options.Password.RequireUppercase = true; //Whether password must at least include one uppercase character.
+                options.Password.RequiredLength = 8; //Used to specify the minimum length of a password.
             });
 
             var app = builder.Build();
