@@ -157,6 +157,9 @@ namespace UploadingEnd.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
+                user.FirstName = info.Principal.Claims.FirstOrDefault(x => x.Type.Contains("givenname")).Value;
+                user.LastName = info.Principal.Claims.FirstOrDefault(x => x.Type.Contains("surname")).Value;
+
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Context;
 
-public class DocumentExchangeDbContext : IdentityDbContext<Chang>
+public class DocumentExchangeDbContext : IdentityDbContext<IdentityUser>
 {
     public DocumentExchangeDbContext(DbContextOptions<DocumentExchangeDbContext> options)
         : base(options)
