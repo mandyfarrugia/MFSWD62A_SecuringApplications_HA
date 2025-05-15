@@ -28,6 +28,18 @@ namespace UploadingEnd
                     options.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
                 });
 
+            builder.Services.AddControllersWithViews();
+
+            /* Registers a configuration delegate to modify default settings configured within ASP.NET Core Identity.
+             * This can be done to change password rules (such as allowing alphanumeric characters and password length),
+             * as well as lockout behaviour (for instance, locking out of a user for an hour after 3 failed password attempts).
+             * Such measures can prevent brute-force attacks from malicious users or automated bots. */
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); //Duration of lockout period once user exceeds the maximum allowed failed attempts.
+                options.Lockout.MaxFailedAccessAttempts = 5; //How many failed attempts are allowed before lockout.         
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
