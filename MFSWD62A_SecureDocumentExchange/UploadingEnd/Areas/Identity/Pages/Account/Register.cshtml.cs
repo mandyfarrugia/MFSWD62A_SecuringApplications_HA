@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
@@ -26,6 +27,7 @@ namespace UploadingEnd.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<UploadingUser> _signInManager;
         private readonly UserManager<UploadingUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserStore<UploadingUser> _userStore;
         private readonly IUserEmailStore<UploadingUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -33,12 +35,14 @@ namespace UploadingEnd.Areas.Identity.Pages.Account
 
         public RegisterModel(
             UserManager<UploadingUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IUserStore<UploadingUser> userStore,
             SignInManager<UploadingUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
@@ -53,6 +57,8 @@ namespace UploadingEnd.Areas.Identity.Pages.Account
         [BindProperty(SupportsGet = true)]
         public InputModel Input { get; set; }
 
+        public List<SelectListItem> AvailableAuthRoles { get; set; } = new();
+        
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -109,17 +115,35 @@ namespace UploadingEnd.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "Register As")]
+            public string AuthRole { get; set; }
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            this.AvailableAuthRoles = this._roleManager.Roles
+                .Select(role => new SelectListItem
+                {
+                    Value = role.Name,
+                    Text = role.Name
+                })
+                .ToList();
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            if (!ModelState.IsValid)
+            {
+                await OnGetAsync();
+                return Page();
+            }
+
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
@@ -134,6 +158,8 @@ namespace UploadingEnd.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, Input.AuthRole);
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
